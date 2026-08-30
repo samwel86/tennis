@@ -5,7 +5,153 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Анализ теннисных матчей</title>
     <style>
-        /* ... все стили остаются без изменений ... */
+        /* ============================================
+           СТИЛИ ДЛЯ СТРАНИЦЫ ВХОДА
+           ============================================ */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a2d3f 0%, #1d5f7a 50%, #2a7a74 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .login-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 35px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-box .logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .login-box h2 {
+            color: #0a2d3f;
+            font-size: 1.4rem;
+            margin-bottom: 6px;
+        }
+
+        .login-box .subtitle {
+            color: #7599ae;
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+        }
+
+        .login-box .form-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .login-box .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1f4b61;
+            margin-bottom: 4px;
+        }
+
+        .login-box .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #cfe0eb;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+            background: #f8faff;
+            box-sizing: border-box;
+        }
+
+        .login-box .form-group input:focus {
+            border-color: #1d5f7a;
+            background: white;
+        }
+
+        .login-box .form-group input.error {
+            border-color: #b13e3e;
+            background: #fdf0f0;
+        }
+
+        .login-box .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: #1d5f7a;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            margin-top: 8px;
+        }
+
+        .login-box .btn-login:hover {
+            background: #154a5e;
+        }
+
+        .login-box .btn-login:active {
+            transform: scale(0.97);
+        }
+
+        .login-box .btn-login:disabled {
+            background: #a0b8c8;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .login-box .error-message {
+            color: #b13e3e;
+            font-size: 0.75rem;
+            margin-top: 10px;
+            min-height: 20px;
+        }
+
+        .login-box .hint {
+            color: #7599ae;
+            font-size: 0.7rem;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e2eff7;
+        }
+
+        .login-box .hint strong {
+            color: #1d5f7a;
+        }
+
+        /* ============================================
+           ВСЕ ОСТАЛЬНЫЕ СТИЛИ (ваши оригинальные)
+           ============================================ */
         * {
             box-sizing: border-box;
             font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -48,9 +194,6 @@
             animation: none;
         }
 
-        /* ============================================
-           СТИЛИ ДЛЯ РАЗДЕЛА ИНСТРУКЦИИ
-           ============================================ */
         .instruction-section {
             background: #f8faff;
             border-radius: 12px;
@@ -261,7 +404,6 @@
             }
         }
 
-        /* Остальные стили из основной программы */
         .games-manager {
             background: #f8faff;
             border-radius: 12px;
@@ -1453,7 +1595,41 @@
     </style>
 </head>
 <body>
-<div class="container">
+
+<!-- ============================================
+     СТРАНИЦА ВХОДА (overlay)
+     ============================================ -->
+<div class="login-overlay" id="loginOverlay">
+    <div class="login-box">
+        <img src="logo.png" alt="Логотип" style="width:48px; height:48px;">
+        <h2>Анализ теннисных матчей</h2>
+        <p class="subtitle">Войдите, чтобы продолжить</p>
+        
+        <div class="form-group">
+            <label for="loginUsername">👤 Имя пользователя</label>
+            <input type="text" id="loginUsername" placeholder="Введите логин" autofocus>
+        </div>
+        
+        <div class="form-group">
+            <label for="loginPassword">🔒 Пароль</label>
+            <input type="password" id="loginPassword" placeholder="Введите пароль">
+        </div>
+        
+        <div class="error-message" id="loginError"></div>
+        
+        <button class="btn-login" id="loginBtn">Войти</button>
+        
+        <div class="hint">
+            <strong>🔑 Для приобретения логина и пароля:</strong><br>
+            Обращаться к: <strong>Самвел</strong> | Тел: <strong>865873101</strong>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================
+     ОСНОВНОЙ КОНТЕНТ
+     ============================================ -->
+<div class="container" id="mainContent" style="display:none;">
     <h1><span class="server-ball" style="animation:none; width:24px; height:24px;"></span> Анализ теннисных матчей</h1>
 
     <!-- ============================================
@@ -1464,7 +1640,7 @@
             <h3>📖 Инструкция по использованию</h3>
             <span class="toggle-icon" id="toggleIcon">▼</span>
         </div>
-        <div class="instruction-content open" id="instructionContent">
+        <div class="instruction-content" id="instructionContent">
             <div class="inner">
                 <h4>🎯 Основные кнопки</h4>
                 <div class="btn-desc">
@@ -1662,7 +1838,7 @@
 
         <div class="actions-buttons-container">
             <button class="btn btn-success" id="saveGameBtn">💾 Сохранить</button>
-            <button class="btn btn-export" id="exportGameBtn">📤 Выгрузить</button>
+            <button class="btn btn-export" id="exportGameBtn" onclick="exportGameToFile()">📤 Выгрузить</button>
             <button class="btn btn-import" id="importGameBtn">📥 Загрузить</button>
             <input type="file" id="fileInput" class="file-input-hidden" accept=".json">
         </div>
@@ -1861,8 +2037,103 @@
 
 <script>
 // ============================================
-// ФУНКЦИЯ ДЛЯ РАСКРЫТИЯ/СВЕРТЫВАНИЯ ИНСТРУКЦИИ
+// БЕЗОПАСНОЕ ХРАНЕНИЕ ПАРОЛЕЙ (SHA-256)
 // ============================================
+
+async function hashPassword(password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// ============================================
+// ПОЛЬЗОВАТЕЛИ (ХЕШИ ПАРОЛЕЙ)
+// ============================================
+const USERS = {
+    'zaya': 'f5d66e66a628ff365bb9fc7f9e718ccc07dbd2fc2a72f688266134c4f6c17ff7', // пароль: 298051
+	'maya': '79f90600713321335f67495193385e34336c3a4eb73757cb4d107f6d3175e9fc', // пароль: ilima2010
+};
+
+// ============================================
+// СИСТЕМА ВХОДА
+// ============================================
+
+const loginOverlay = document.getElementById('loginOverlay');
+const loginUsername = document.getElementById('loginUsername');
+const loginPassword = document.getElementById('loginPassword');
+const loginBtn = document.getElementById('loginBtn');
+const loginError = document.getElementById('loginError');
+
+function checkSession() {
+    const isLoggedIn = sessionStorage.getItem('tennisLoggedIn');
+    if (isLoggedIn === 'true') {
+        loginOverlay.classList.add('hidden');
+        document.getElementById('mainContent').style.display = 'block';
+        if (typeof init === 'function') {
+            init();
+        }
+    }
+}
+
+async function handleLogin() {
+    const username = loginUsername.value.trim();
+    const password = loginPassword.value.trim();
+
+    if (!username || !password) {
+        loginError.textContent = '⚠️ Введите логин и пароль';
+        loginUsername.classList.toggle('error', !username);
+        loginPassword.classList.toggle('error', !password);
+        return;
+    }
+
+    if (USERS.hasOwnProperty(username)) {
+        const hashedInput = await hashPassword(password);
+        if (USERS[username] === hashedInput) {
+            loginError.textContent = '';
+            loginUsername.classList.remove('error');
+            loginPassword.classList.remove('error');
+            sessionStorage.setItem('tennisLoggedIn', 'true');
+            loginOverlay.classList.add('hidden');
+            document.getElementById('mainContent').style.display = 'block';
+            if (typeof init === 'function') {
+                init();
+            }
+        } else {
+            loginError.textContent = '❌ Неверный пароль';
+            loginUsername.classList.add('error');
+            loginPassword.classList.add('error');
+            loginPassword.value = '';
+            loginPassword.focus();
+        }
+    } else {
+        loginError.textContent = '❌ Пользователь не найден';
+        loginUsername.classList.add('error');
+        loginPassword.classList.add('error');
+        loginPassword.value = '';
+        loginPassword.focus();
+    }
+}
+
+loginBtn.addEventListener('click', handleLogin);
+loginUsername.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') loginPassword.focus();
+    this.classList.remove('error');
+    loginError.textContent = '';
+});
+loginPassword.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') handleLogin();
+    this.classList.remove('error');
+    loginError.textContent = '';
+});
+
+checkSession();
+
+// ============================================
+// ВСЯ ОСТАЛЬНАЯ ЛОГИКА ПРОГРАММЫ
+// ============================================
+
 function toggleInstruction() {
     const content = document.getElementById('instructionContent');
     const icon = document.getElementById('toggleIcon');
@@ -1870,24 +2141,13 @@ function toggleInstruction() {
     icon.classList.toggle('collapsed');
 }
 
-// ============================================
-// ВСЯ ОСТАЛЬНАЯ ЛОГИКА ПРОГРАММЫ
-// ============================================
-
-// Массив для хранения истории матчей
 let matchHistory = [];
-
-// Переменные для таймера
 let startTime = null;
 let timerInterval = null;
 let timerElement = document.getElementById('timer');
 let matchDurationStat = document.getElementById('match-duration-stat');
-
-// Переменные для системы подачи
 let serveAttempt = 1;
 let isServingPlayer = 1;
-
-// Счетчики статистики (только для Игрока 1)
 let countFault1 = 0;
 let countFault2 = 0;
 let countServe1 = 0;
@@ -1897,18 +2157,13 @@ let aceCount = 0;
 let winnerCount = 0;
 let dfCount = 0;
 let ueCount = 0;
-
 let isMatchActive = false;
 let isRetired = false;
 
-// Кнопки подачи
 const firstServeBtn = document.getElementById('firstServeBtn');
 const secondServeBtn = document.getElementById('secondServeBtn');
 const faultBtn = document.getElementById('faultBtn');
 
-// ============================================
-// ФУНКЦИЯ СБРОСА СТАТИСТИКИ
-// ============================================
 function resetStatistics() {
     countFault1 = 0;
     countFault2 = 0;
@@ -1919,7 +2174,6 @@ function resetStatistics() {
     winnerCount = 0;
     dfCount = 0;
     ueCount = 0;
-    
     records = [];
     currentGameNumber = 1;
     currentPoints = [];
@@ -1937,10 +2191,8 @@ function resetStatistics() {
     matchStarted = false;
     isRetired = false;
     isMatchActive = false;
-    
     serveAttempt = 1;
     isServingPlayer = 1;
-    
     if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
@@ -1948,7 +2200,6 @@ function resetStatistics() {
     startTime = null;
     if (timerElement) timerElement.textContent = '00:00';
     if (matchDurationStat) matchDurationStat.textContent = '0:00';
-    
     document.getElementById('shortGames').textContent = '0';
     document.getElementById('mediumGames').textContent = '0';
     document.getElementById('longGames').textContent = '0';
@@ -1962,7 +2213,6 @@ function resetStatistics() {
     document.getElementById('player1Games').textContent = '0';
     document.getElementById('player2Games').textContent = '0';
     document.getElementById('avgPoints').textContent = '0.0';
-    
     updateFaultStatsDisplay();
     updateAll();
 }
@@ -2019,21 +2269,17 @@ function saveMatchHistory() {
 function renderHistory() {
     const listElement = document.getElementById('matchHistoryList');
     if (!listElement) return;
-    
     if (matchHistory.length === 0) {
         listElement.innerHTML = '<div class="history-empty">Нет завершенных матчей</div>';
         return;
     }
-    
     listElement.innerHTML = matchHistory.map((match, index) => {
         const date = match.date || new Date().toLocaleString();
         const duration = match.duration || '0:00';
         const winner = match.winner || 'Неизвестно';
         const isRetiredMatch = match.isRetired || false;
-        
         let winnerClass = 'win-draw';
         let winnerDisplay = `🤝 ${winner}`;
-        
         if (isRetiredMatch) {
             winnerClass = 'win-retired';
             const note = match.note || '';
@@ -2045,7 +2291,6 @@ function renderHistory() {
             winnerClass = 'win-p2';
             winnerDisplay = `🏆 ${winner}`;
         }
-        
         return `<div class="match-history-item">
             <span class="match-result">${index + 1}. ${match.result}</span>
             <span class="match-winner ${winnerClass}">${winnerDisplay}</span>
@@ -2053,7 +2298,6 @@ function renderHistory() {
             <span class="match-delete" data-index="${index}">✕</span>
         </div>`;
     }).join('');
-    
     document.querySelectorAll('.match-delete').forEach(el => {
         el.addEventListener('click', function() {
             const index = parseInt(this.getAttribute('data-index'), 10);
@@ -2088,7 +2332,7 @@ let currentGameId = null;
 let records = [];
 let currentGameNumber = 1;
 let currentPoints = [];
-let pointMetadata = []; 
+let pointMetadata = [];
 let currentFirst = 0;
 let currentSecond = 0;
 let currentSet = 1;
@@ -2098,7 +2342,7 @@ let setWinner = {1: null, 2: null, 3: null};
 let setTiebreakScore = {1: null, 2: null, 3: null};
 let isTiebreak = false;
 let tiebreakStarted = {1: false, 2: false, 3: false};
-let initialServer = 1; 
+let initialServer = 1;
 let matchStarted = false;
 let isMatchFinished = false;
 let matchStartTime = null;
@@ -2108,7 +2352,6 @@ let matchTimerInterval = null;
 const tennisMap = { 0: '0', 1: '15', 2: '30', 3: '40', 4: 'AD' };
 const revTennisMap = { '0': 0, '15': 1, '30': 2, '40': 3, 'AD': 4 };
 
-// DOM Elements
 const player1ScoreEl = document.getElementById('player1Score');
 const player2ScoreEl = document.getElementById('player2Score');
 const currentGameNumberEl = document.getElementById('currentGameNumber');
@@ -2139,7 +2382,6 @@ const matchStatus = document.getElementById('matchStatus');
 const livePanel = document.getElementById('livePanel');
 const clearHistoryBtn = document.getElementById('clearHistoryBtn');
 
-// Stats Elements
 const totalGamesEl = document.getElementById('totalGames');
 const player1GamesEl = document.getElementById('player1Games');
 const player2GamesEl = document.getElementById('player2Games');
@@ -2154,7 +2396,6 @@ const statWinnerEl = document.getElementById('statWinner');
 const statDfEl = document.getElementById('statDf');
 const statUeEl = document.getElementById('statUe');
 
-// Sets Blocks
 const set1Score = document.getElementById('set1Score'), set2Score = document.getElementById('set2Score'), set3Score = document.getElementById('set3Score');
 const set1Status = document.getElementById('set1Status'), set2Status = document.getElementById('set2Status'), set3Status = document.getElementById('set3Status');
 const set1Block = document.getElementById('set1Block'), set2Block = document.getElementById('set2Block'), set3Block = document.getElementById('set3Block');
@@ -2268,11 +2509,9 @@ function registerFault() {
 function updateServerIndicator() {
     let currentServer = initialServer;
     let totalPlayedGames = records.filter(r => r.set === currentSet && !r.isTiebreak).length;
-    
     if (totalPlayedGames % 2 !== 0) {
         currentServer = initialServer === 1 ? 2 : 1;
     }
-    
     if (isTiebreak) {
         let totalTiebreakPoints = currentFirst + currentSecond;
         if (totalTiebreakPoints > 0) {
@@ -2282,12 +2521,10 @@ function updateServerIndicator() {
             }
         }
     }
-
     isServingPlayer = currentServer;
     updateServeStatus();
-
     if (currentServer === 1) {
-        ballWe.style.display = 'inline-block'; 
+        ballWe.style.display = 'inline-block';
         ballThem.style.display = 'none';
         ballWe.style.animation = 'pulse 0.7s infinite alternate';
         ballThem.style.animation = 'none';
@@ -2321,14 +2558,12 @@ function updateCurrentGameDisplay() {
     player2GamesLabel.textContent = opponentName || 'Игрок 2';
     scoreLabelThem.textContent = opponentName || 'Игрок 2';
     opponentNameText.textContent = opponentName;
-    
     const ballElement = document.getElementById('ballWe');
     labelWe.innerHTML = '';
     labelWe.appendChild(ballElement);
     labelWe.appendChild(document.createTextNode(' 👤 ' + myName));
-    
-    updatePointsDisplay(); 
-    updateSetsDisplay(); 
+    updatePointsDisplay();
+    updateSetsDisplay();
     updateServerSelectOptions();
     updateServerIndicator();
 }
@@ -2337,9 +2572,7 @@ function addPointToPlayer(player, type = 'normal') {
     if (!matchStarted) { alert('Сначала начните матч!'); return; }
     if (isMatchFinished) { alert('Матч уже завершён!'); return; }
     if (setCompleted[currentSet]) { alert(`Сет ${currentSet} уже завершён!`); return; }
-    
     totalPoints++;
-    
     if (type === 'df') {
         if (isServingPlayer === 1) {
             dfCount++;
@@ -2364,7 +2597,6 @@ function addPointToPlayer(player, type = 'normal') {
             statUeEl.textContent = ueCount;
         }
     }
-    
     if (isTiebreak) {
         if (player === 1) currentFirst++; else currentSecond++;
         currentPoints.push(formatScoreDisplay(currentFirst, currentSecond));
@@ -2404,36 +2636,29 @@ function startMatch() {
     const opponentName = opponentNameInput.value.trim();
     const matchName = matchNameInput.value.trim();
     const matchDate = matchDateInput.value.trim();
-    
     if (!myName || !opponentName || !matchName || !matchDate) {
         alert("Пожалуйста, введите имена игроков, название и дату матча, чтобы начать игру.");
         return;
     }
-    
     resetStatistics();
-    
     matchStarted = true;
     isMatchActive = true;
     isMatchFinished = false;
     isRetired = false;
     matchStartTime = new Date();
     matchEndTime = null;
-    
     serveAttempt = 1;
     isServingPlayer = initialServer;
     updateServeStatus();
-    
     startTime = new Date();
     if (timerInterval) clearInterval(timerInterval);
     timerInterval = setInterval(updateTimerDisplay, 1000);
     updateTimerDisplay();
-    
     matchStatus.textContent = '🏟️ Матч начат! Счёт 0:0';
     matchStatus.className = 'match-status active';
     matchStatus.style.background = '#1d7a4a';
     matchStatus.style.color = 'white';
     matchStatus.style.display = 'block';
-    
     addPointWeBtn.disabled = false;
     addPointThemBtn.disabled = false;
     faultBtn.disabled = false;
@@ -2450,7 +2675,6 @@ function startMatch() {
     finishMatchBtn.disabled = false;
     retireP1Btn.disabled = false;
     retireP2Btn.disabled = false;
-    
     startMatchBtn.disabled = true;
     startMatchBtn.textContent = '✅ Начат';
     myNameInput.disabled = true;
@@ -2461,9 +2685,7 @@ function startMatch() {
     document.getElementById('itf1Input').disabled = true;
     document.getElementById('wtn2Input').disabled = true;
     document.getElementById('itf2Input').disabled = true;
-    
     livePanel.classList.remove('match-finished', 'match-retired');
-    
     updateServerIndicator();
     updateCurrentGameDisplay();
 }
@@ -2646,7 +2868,6 @@ function retirePlayer(playerNumber) {
     const s1 = setWins[1].p1 + setWins[2].p1 + setWins[3].p1;
     const s2 = setWins[1].p2 + setWins[2].p2 + setWins[3].p2;
     const note = `Ret(${s1}-${s2})`;
-    
     addPointWeBtn.disabled = true;
     addPointThemBtn.disabled = true;
     faultBtn.disabled = true;
@@ -2673,19 +2894,16 @@ function retirePlayer(playerNumber) {
     document.getElementById('itf1Input').disabled = false;
     document.getElementById('wtn2Input').disabled = false;
     document.getElementById('itf2Input').disabled = false;
-    
     matchStatus.textContent = `🚫 ${playerName} снялся! Победитель: ${winnerName} ${note} Время: ${duration}`;
     matchStatus.className = 'match-status retired';
     matchStatus.style.display = 'block';
     livePanel.classList.remove('match-finished');
     livePanel.classList.add('match-retired');
     serveStatus.textContent = '🚫 Матч завершён (снятие)';
-    
     const myName = getMyName() || 'Игрок 1';
     const opponentName = getOpponentName() || 'Игрок 2';
     const matchResult = `${myName} ${setWins[1].p1}:${setWins[1].p2} (Сет 1) / ${setWins[2].p1}:${setWins[2].p2} (Сет 2) / ${setWins[3].p1}:${setWins[3].p2} (Сет 3) — ${opponentName}`;
     addMatchToHistory(matchResult, duration, `${winnerName}`, winnerType, true, note);
-    
     if (timerElement) timerElement.textContent = '00:00';
     if (matchDurationStat) matchDurationStat.textContent = '0:00';
     updateCurrentGameDisplay();
@@ -2769,7 +2987,7 @@ function formatScoreDisplay(first, second) {
 }
 
 function updatePointsDisplay() {
-    let wePoints = []; 
+    let wePoints = [];
     let themPoints = [];
     currentPoints.forEach((p, idx) => {
         const parts = p.split('/');
@@ -2813,9 +3031,9 @@ function updatePointsDisplay() {
             }
         }
     });
-    wePointsList.innerHTML = wePoints.length === 0 ? '<span style="color:#7599ae;font-size:0.55rem;">Нет</span>' : 
+    wePointsList.innerHTML = wePoints.length === 0 ? '<span style="color:#7599ae;font-size:0.55rem;">Нет</span>' :
         wePoints.map(p => `<span class="point-item winner-we ${isTiebreak ? 'tiebreak-point' : ''}">${p}</span>`).join('');
-    themPointsList.innerHTML = themPoints.length === 0 ? '<span style="color:#7599ae;font-size:0.55rem;">Нет</span>' : 
+    themPointsList.innerHTML = themPoints.length === 0 ? '<span style="color:#7599ae;font-size:0.55rem;">Нет</span>' :
         themPoints.map(p => `<span class="point-item winner-them ${isTiebreak ? 'tiebreak-point' : ''}">${p}</span>`).join('');
 }
 
@@ -2857,7 +3075,6 @@ function finishGame(winner) {
     if (winner === 1) setWins[currentSet].p1++; else setWins[currentSet].p2++;
     currentGameNumber++; currentPoints = []; pointMetadata = []; currentFirst = 0; currentSecond = 0;
     updateCurrentGameDisplay(); updateAll();
-    
     if (checkTiebreak()) return;
     if (checkSetCompletion()) return;
 }
@@ -2937,18 +3154,18 @@ function updateSetsDisplay() {
             }
         } else if (n === currentSet) {
             b.classList.add('active');
-            if (tiebreakStarted[n]) { 
-                b.classList.add('tiebreak'); 
-                s.textContent = '⚡'; 
-                s.className = 'set-status tiebreak'; 
-            } else { 
-                s.textContent = '▶'; 
-                s.className = 'set-status active-set'; 
+            if (tiebreakStarted[n]) {
+                b.classList.add('tiebreak');
+                s.textContent = '⚡';
+                s.className = 'set-status tiebreak';
+            } else {
+                s.textContent = '▶';
+                s.className = 'set-status active-set';
             }
             tiebreakEl.style.display = 'none';
-        } else { 
-            s.textContent = '⏳'; 
-            s.className = 'set-status waiting'; 
+        } else {
+            s.textContent = '⏳';
+            s.className = 'set-status waiting';
             tiebreakEl.style.display = 'none';
         }
     });
@@ -2974,8 +3191,8 @@ function checkSetCompletion() {
 
 function recalculateStateFromRecords() {
     setWins = {1: {p1: 0, p2: 0}, 2: {p1: 0, p2: 0}, 3: {p1: 0, p2: 0}};
-    setCompleted = {1: false, 2: false, 3: false}; 
-    setWinner = {1: null, 2: null, 3: null}; 
+    setCompleted = {1: false, 2: false, 3: false};
+    setWinner = {1: null, 2: null, 3: null};
     setTiebreakScore = {1: null, 2: null, 3: null};
     tiebreakStarted = {1: false, 2: false, 3: false};
     isMatchFinished = false;
@@ -2997,9 +3214,9 @@ function recalculateStateFromRecords() {
     });
     for(let s = 1; s <= 3; s++) {
         let p1 = setWins[s].p1, p2 = setWins[s].p2;
-        if ((p1 >= 6 || p2 >= 6) && Math.abs(p1-p2) >= 2) { 
-            setCompleted[s] = true; 
-            setWinner[s] = p1 > p2 ? 1 : 2; 
+        if ((p1 >= 6 || p2 >= 6) && Math.abs(p1-p2) >= 2) {
+            setCompleted[s] = true;
+            setWinner[s] = p1 > p2 ? 1 : 2;
         }
     }
     let setsWon1 = 0, setsWon2 = 0;
@@ -3027,12 +3244,12 @@ function recalculateStateFromRecords() {
         livePanel.classList.add('match-finished');
         serveStatus.textContent = '🏆 Матч завершён';
     }
-    currentSet = 1; 
+    currentSet = 1;
     while (currentSet < 3 && setCompleted[currentSet]) currentSet++;
-    currentGameNumber = records.length + 1; 
-    currentPoints = []; 
-    pointMetadata = []; 
-    currentFirst = 0; 
+    currentGameNumber = records.length + 1;
+    currentPoints = [];
+    pointMetadata = [];
+    currentFirst = 0;
     currentSecond = 0;
     if (setWins[currentSet].p1 === 6 && setWins[currentSet].p2 === 6) {
         tiebreakStarted[currentSet] = true;
@@ -3128,7 +3345,7 @@ function renderTable() {
         btn.addEventListener('click', function() {
             const idx = parseInt(this.getAttribute('data-index'), 10);
             if (confirm("Удалить этот гейм и пересчитать счёт матча?")) {
-                records.splice(idx, 1); 
+                records.splice(idx, 1);
                 recalculateStateFromRecords();
                 updateAll();
             }
@@ -3152,14 +3369,14 @@ function saveCurrentGame() {
     const gameId = 'game_' + Date.now();
     const totalDuration = (matchStartTime && matchEndTime) ? (matchEndTime - matchStartTime) : 0;
     const details = getPlayerDetails();
-    savedGames[gameId] = { 
-        name: name, 
+    savedGames[gameId] = {
+        name: name,
         myName: getMyName(),
-        opponent: getOpponentName(), 
+        opponent: getOpponentName(),
         matchName: matchNameInput.value.trim(),
         matchDate: matchDateInput.value.trim(),
-        date: new Date().toLocaleString(), 
-        initialServer: initialServer, 
+        date: new Date().toLocaleString(),
+        initialServer: initialServer,
         records: JSON.stringify(records),
         isMatchFinished: isMatchFinished,
         isRetired: isRetired,
@@ -3258,13 +3475,11 @@ function loadGame(id) {
         if (matchDurationStat) matchDurationStat.textContent = '0:00';
     }
     recalculateStateFromRecords();
-    renderGamesList(); 
+    renderGamesList();
     updateAll();
     updateServerSelectOptions();
     validateMatchFields();
-    
     updateServeStatus();
-    
     if (isMatchFinished) {
         addPointWeBtn.disabled = true;
         addPointThemBtn.disabled = true;
@@ -3296,20 +3511,35 @@ function loadGame(id) {
 }
 
 // ============================================
-// ИСПРАВЛЕННАЯ ФУНКЦИЯ exportGameToFile
-// Поддерживает скачивание в APK-приложениях
+// УНИВЕРСАЛЬНАЯ ФУНКЦИЯ ЭКСПОРТА
+// (работает в Android, Capacitor и браузере)
 // ============================================
 function exportGameToFile() {
     const totalDuration = (matchStartTime && matchEndTime) ? (matchEndTime - matchStartTime) : 0;
     const details = getPlayerDetails();
-    const data = { 
-        name: matchNameInput.value.trim() || 'Без названия',
+    
+    // ==========================================
+    // СОЗДАЁМ ИМЯ ФАЙЛА
+    // ==========================================
+    let fileNameBase = matchNameInput.value.trim();
+    
+    if (!fileNameBase) {
+        const myName = getMyName() || 'Игрок1';
+        const opponent = getOpponentName() || 'Игрок2';
+        const date = matchDateInput.value || new Date().toISOString().split('T')[0];
+        fileNameBase = `${myName}_vs_${opponent}_${date}`;
+    }
+    
+    fileNameBase = fileNameBase.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9а-яА-Я_\-]/g, '');
+    
+    const data = {
+        name: fileNameBase,
         myName: getMyName(),
         opponent: getOpponentName(),
         matchName: matchNameInput.value.trim(),
         matchDate: matchDateInput.value.trim(),
-        date: new Date().toLocaleString(), 
-        initialServer: initialServer, 
+        date: new Date().toLocaleString(),
+        initialServer: initialServer,
         records: records,
         isMatchFinished: isMatchFinished,
         isRetired: isRetired,
@@ -3328,26 +3558,43 @@ function exportGameToFile() {
     };
     
     const jsonString = JSON.stringify(data, null, 2);
-    const fileName = `${data.name}.json`;
+    const fileName = `${fileNameBase}.json`;
     
-    // Способ 1: Data URI (работает в большинстве случаев, включая WebView)
+    // ==========================================
+    // СПОСОБ 1: Android (если есть)
+    // ==========================================
     try {
-        const encodedData = encodeURIComponent(jsonString);
-        const dataUri = 'data:application/json;charset=utf-8,' + encodedData;
-        const link = document.createElement('a');
-        link.href = dataUri;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        return;
+        if (window.Android && typeof window.Android.downloadFile === 'function') {
+            window.Android.downloadFile(jsonString, fileName);
+            alert('✅ Файл сохранён в папку Downloads!');
+            return;
+        }
     } catch (e) {
-        console.log('Способ 1 не сработал:', e);
+        console.log('Android не сработал:', e);
     }
     
-    // Способ 2: Blob + createObjectURL (стандартный)
+    // ==========================================
+    // СПОСОБ 2: Capacitor (если есть)
+    // ==========================================
     try {
-        const blob = new Blob([jsonString], {type: 'application/json'});
+        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.FileSharer) {
+            window.Capacitor.Plugins.FileSharer.share({
+                filename: fileName,
+                contentType: 'application/json',
+                data: jsonString,
+                dialogTitle: 'Сохранить файл'
+            });
+            return;
+        }
+    } catch (e) {
+        console.log('Capacitor не сработал:', e);
+    }
+    
+    // ==========================================
+    // СПОСОБ 3: Браузер (скачивание через ссылку)
+    // ==========================================
+    try {
+        const blob = new Blob([jsonString], {type: 'application/json;charset=utf-8'});
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -3356,88 +3603,32 @@ function exportGameToFile() {
         link.click();
         document.body.removeChild(link);
         setTimeout(() => URL.revokeObjectURL(url), 5000);
+        alert('✅ Файл скачан!');
         return;
     } catch (e) {
-        console.log('Способ 2 не сработал:', e);
+        console.log('Браузерное скачивание не сработало:', e);
     }
     
-    // Способ 3: Web Share API (Android 11+)
-    if (navigator.share) {
-        try {
-            const blob = new Blob([jsonString], {type: 'application/json'});
-            const file = new File([blob], fileName, {type: 'application/json'});
-            navigator.share({
-                title: fileName,
-                files: [file]
-            }).catch(() => {});
-            return;
-        } catch (e) {
-            console.log('Способ 3 не сработал:', e);
-        }
-    }
-    
-    // Способ 4: window.open для небольших файлов
+    // ==========================================
+    // СПОСОБ 4: Буфер обмена (последний шанс)
+    // ==========================================
+    fallbackCopyToClipboard(jsonString);
+}
+
+function fallbackCopyToClipboard(text) {
     try {
-        const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(jsonString);
-        window.open(dataUri, '_blank');
-        return;
-    } catch (e) {
-        console.log('Способ 4 не сработал:', e);
-    }
-    
-    // Способ 5: Копирование в буфер обмена (последний шанс)
-    try {
-        if (confirm('Автоматическое скачивание не работает. Скопировать JSON в буфер обмена?')) {
-            navigator.clipboard.writeText(jsonString).then(() => {
-                alert('JSON скопирован в буфер обмена. Вставьте его в файл с расширением .json');
-            }).catch(() => {
-                const textArea = document.createElement('textarea');
-                textArea.value = jsonString;
-                textArea.style.position = 'fixed';
-                textArea.style.left = '-9999px';
-                textArea.style.top = '0';
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                alert('JSON скопирован в буфер обмена. Вставьте его в файл с расширением .json');
-            });
-        }
-        return;
-    } catch (e) {
-        console.log('Все способы не сработали:', e);
-        alert('Не удалось скачать файл. Пожалуйста, скопируйте данные вручную.');
         const textArea = document.createElement('textarea');
-        textArea.value = jsonString;
-        textArea.style.width = '90%';
-        textArea.style.height = '300px';
-        textArea.style.margin = '10px auto';
-        textArea.style.display = 'block';
-        const modal = document.createElement('div');
-        modal.style.position = 'fixed';
-        modal.style.top = '0';
-        modal.style.left = '0';
-        modal.style.width = '100%';
-        modal.style.height = '100%';
-        modal.style.background = 'rgba(0,0,0,0.8)';
-        modal.style.display = 'flex';
-        modal.style.alignItems = 'center';
-        modal.style.justifyContent = 'center';
-        modal.style.zIndex = '9999';
-        const content = document.createElement('div');
-        content.style.background = 'white';
-        content.style.padding = '20px';
-        content.style.borderRadius = '12px';
-        content.style.maxWidth = '90%';
-        content.style.maxHeight = '90%';
-        content.style.overflow = 'auto';
-        content.innerHTML = `
-            <h3 style="margin-bottom:10px;">📋 Скопируйте JSON вручную</h3>
-            <textarea style="width:100%;height:300px;font-size:12px;font-family:monospace;padding:8px;border:1px solid #ccc;border-radius:8px;">${jsonString}</textarea>
-            <button onclick="this.closest('div[style]').parentElement.remove()" style="margin-top:10px;padding:8px 20px;background:#1d5f7a;color:white;border:none;border-radius:8px;cursor:pointer;">Закрыть</button>
-        `;
-        modal.appendChild(content);
-        document.body.appendChild(modal);
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        textArea.style.top = '0';
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        alert('📋 Данные скопированы в буфер обмена!');
+    } catch (e) {
+        alert('❌ Не удалось сохранить файл.');
     }
 }
 
@@ -3451,14 +3642,14 @@ function importGameFromFile(file) {
                 return;
             }
             const id = 'import_' + Date.now();
-            savedGames[id] = { 
+            savedGames[id] = {
                 name: data.name || data.matchName || 'Без названия',
                 myName: data.myName || '',
                 opponent: data.opponent || '',
                 matchName: data.matchName || data.name || '',
                 matchDate: data.matchDate || '',
-                date: data.date || new Date().toLocaleString(), 
-                initialServer: data.initialServer || 1, 
+                date: data.date || new Date().toLocaleString(),
+                initialServer: data.initialServer || 1,
                 records: JSON.stringify(data.records),
                 isMatchFinished: data.isMatchFinished || false,
                 isRetired: data.isRetired || false,
@@ -3481,7 +3672,7 @@ function importGameFromFile(file) {
                 alert('Ошибка сохранения! Возможно, недостаточно места.');
                 return;
             }
-            renderGamesList(); 
+            renderGamesList();
             loadGame(id);
             alert('Файл успешно импортирован!');
         } catch (error) {
@@ -3492,14 +3683,13 @@ function importGameFromFile(file) {
 }
 
 function init() {
-    try { 
+    try {
         const saved = localStorage.getItem('tennisSavedGames');
         savedGames = saved ? JSON.parse(saved) : {};
-    } catch(e) { 
-        savedGames = {}; 
+    } catch(e) {
+        savedGames = {};
     }
     loadMatchHistory();
-    
     clearHistoryBtn.addEventListener('click', function() {
         if (confirm('Вы уверены, что хотите очистить всю историю матчей?')) {
             matchHistory = [];
@@ -3507,11 +3697,9 @@ function init() {
             renderHistory();
         }
     });
-    
     if (refreshGamesBtn) {
         refreshGamesBtn.addEventListener('click', renderGamesList);
     }
-    
     if (deleteAllGamesBtn) {
         deleteAllGamesBtn.addEventListener('click', function() {
             if (confirm('Удалить все сохраненные игры?')) {
@@ -3527,12 +3715,10 @@ function init() {
             }
         });
     }
-    
     const today = new Date().toISOString().split('T')[0];
     matchDateInput.value = today;
     updateServeStatus();
     updateFaultStatsDisplay();
-    
     addPointWeBtn.addEventListener('click', () => addPointToPlayer(1, 'normal'));
     addPointThemBtn.addEventListener('click', () => addPointToPlayer(2, 'normal'));
     faultBtn.addEventListener('click', registerFault);
@@ -3544,19 +3730,19 @@ function init() {
     document.getElementById('btnUeThem').addEventListener('click', () => addPointToPlayer(1, 'ue'));
     document.getElementById('btnUeWe').addEventListener('click', () => addPointToPlayer(2, 'ue'));
     document.getElementById('undoPointBtn').addEventListener('click', undoLastPoint);
-    document.getElementById('clearPointsBtn').addEventListener('click', () => { 
-        if (confirm('Очистить гейм?')) { 
-            currentPoints=[]; 
-            pointMetadata=[]; 
-            currentFirst=0; 
-            currentSecond=0; 
+    document.getElementById('clearPointsBtn').addEventListener('click', () => {
+        if (confirm('Очистить гейм?')) {
+            currentPoints=[];
+            pointMetadata=[];
+            currentFirst=0;
+            currentSecond=0;
             serveAttempt = 1;
             updateServeStatus();
-            updateCurrentGameDisplay(); 
-        } 
+            updateCurrentGameDisplay();
+        }
     });
-    document.getElementById('clearCurrentGameBtn').addEventListener('click', () => { 
-        if (confirm('Сбросить весь матч?')) { 
+    document.getElementById('clearCurrentGameBtn').addEventListener('click', () => {
+        if (confirm('Сбросить весь матч?')) {
             resetStatistics();
             updateAll();
             updateServeStatus();
@@ -3566,29 +3752,24 @@ function init() {
             matchStatus.style.background = '#fff3cd';
             matchStatus.style.color = '#8a6a1a';
             matchStatus.style.display = 'block';
-        } 
+        }
     });
-    
     startMatchBtn.addEventListener('click', startMatch);
     finishMatchBtn.addEventListener('click', finishMatch);
     retireP1Btn.addEventListener('click', () => retirePlayer(1));
     retireP2Btn.addEventListener('click', () => retirePlayer(2));
-    
     if (saveGameBtn) saveGameBtn.addEventListener('click', saveCurrentGame);
     if (exportGameBtn) exportGameBtn.addEventListener('click', exportGameToFile);
     if (importGameBtn) importGameBtn.addEventListener('click', () => fileInput.click());
-    
     fileInput.addEventListener('change', function() {
         if (!this.files[0]) return;
         importGameFromFile(this.files[0]);
         this.value = '';
     });
-    
     firstServerSelect.addEventListener('change', function() {
         initialServer = parseInt(this.value, 10);
         updateServerIndicator();
     });
-    
     myNameInput.addEventListener('input', () => {
         updateServerSelectOptions();
         validateMatchFields();
@@ -3601,8 +3782,7 @@ function init() {
     });
     matchNameInput.addEventListener('input', validateMatchFields);
     matchDateInput.addEventListener('input', validateMatchFields);
-    
-    renderGamesList(); 
+    renderGamesList();
     if (Object.keys(savedGames).length > 0) {
         loadGame(Object.keys(savedGames)[0]);
     } else {
@@ -3612,7 +3792,9 @@ function init() {
     validateMatchFields();
 }
 
-init();
+if (sessionStorage.getItem('tennisLoggedIn') === 'true') {
+    init();
+}
 </script>
 </body>
 </html>
